@@ -1,2 +1,5 @@
 .env
 template.yml
+
+## ビルド成果物
+src/.aws-sam
