@@ -1,0 +1,33 @@
+service: go-echo-lambda
+
+provider:
+  name: aws
+  runtime: go1.x
+
+Resources:
+  MyLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub function_name
+      Runtime: go1.x
+      Timeout: 30
+      Handler: main
+      CodeUri: .
+      Environment:
+        Variables:
+          # 環境変数
+          ENV: local
+          DB_USER: DB_USER
+          DB_PASS: DB_PASSWORD
+          DB_HOST: DB_HOST
+          DB_PORT: DB_PORT
+          DB_NAME: DB_NAME
+          # AWSパラメータ
+          REGION: REGION
+          SECRETS_MANAGER:
+      Events:
+        MyAPI:
+          Type: Api
+          Properties:
+            Path: /function_name/{proxy+}
+            Method: any

@@ -1,0 +1,32 @@
+service: go-echo-lambda
+provider:
+  name: aws
+  runtime: go1.x
+Resources:
+  MyLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: sample_function
+      Runtime: go1.x
+      Timeout: 30
+      Handler: main
+      CodeUri: MyLambdaFunction
+      Environment:
+        Variables:
+          ENV: local
+          DB_USER: root
+          DB_PASS: password
+          DB_HOST: api-db-1
+          DB_PORT: '3306'
+          DB_NAME: myapp
+          REGION: ap-northeast-1
+          SECRETS_MANAGER: null
+      Events:
+        MyAPI:
+          Type: Api
+          Properties:
+            Path: /sample_function/{proxy+}
+            Method: any
+    Metadata:
+      SamResourceId: MyLambdaFunction
