@@ -7,7 +7,6 @@ import (
 	"y-ogura/echo_lambda_sample/src/config"
 	"y-ogura/echo_lambda_sample/src/logger"
 	"y-ogura/echo_lambda_sample/src/router"
-	awsutil "y-ogura/echo_lambda_sample/src/utils/aws"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -22,8 +21,7 @@ var echoLambda *echoadapter.EchoLambda
 func main() {
 	logger.Log.Info("Start Lambda server")
 	godotenv.Load()
-	awsCfg := awsutil.NewAWSService().Config
-	db := config.InitDB(awsCfg) // DB初期化
+	db := config.InitDB() // DB初期化
 	e := echo.New()
 
 	originsEnv := os.Getenv("ALLOWED_ORIGINS")

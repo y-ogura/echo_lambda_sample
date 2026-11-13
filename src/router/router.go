@@ -11,6 +11,13 @@ import (
 func Init(e *echo.Echo, db *gorm.DB) {
 	urlPrefix := os.Getenv("PAGE_URL_PREFIX")
 	g := e.Group(urlPrefix)
+
+	// add routing
+	// example)
+	// userRepo := repository.NewUserRepository(db)
+	// userUsecase := usecase.NewUserUsecase(userRepo)
+	// userHandler.NewUserHandler(userUsecase)
+
 	g.GET("/health", func(ctx echo.Context) error {
 		message := "hello, world!"
 		return ctx.String(http.StatusOK, message)

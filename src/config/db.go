@@ -5,21 +5,18 @@ import (
 	"time"
 	"y-ogura/echo_lambda_sample/src/logger"
 	"y-ogura/echo_lambda_sample/src/utils"
-	"y-ogura/echo_lambda_sample/src/utils/aws/secrets_manager"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	mysqlDriver "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-func InitDB(cfg aws.Config) *gorm.DB {
-	DBuser, DBpass := getDBCredentials(cfg)
+func InitDB() *gorm.DB {
 
 	c := mysqlDriver.Config{
 		DBName:               getEnv("DB_NAME", "myapp"),
-		User:                 DBuser,
-		Passwd:               DBpass,
+		User:                 getEnv("DB_USER", "root"),
+		Passwd:               getEnv("DB_PASS", "password"),
 		Addr:                 getEnv("DB_HOST", "127.0.0.1") + ":" + getEnv("DB_PORT", "3306"),
 		Net:                  "tcp",
 		ParseTime:            true,
@@ -55,25 +52,4 @@ func getEnv(key string, defaultVal string) string {
 		return value
 	}
 	return defaultVal
-}
-
-// SECRETS_MANAGERとREGIONが設定されている場合はSecretsManagerから取得
-func getDBCredentials(cfg aws.Config) (string, string) {
-	DBuser := getEnv("DB_USER", "root")
-	DBpass := getEnv("DB_PASS", "password")
-	smName := getEnv("SECRETS_MANAGER", "")
-	region := getEnv("REGION", "")
-
-	if smName == "" || region == "" {
-		return DBuser, DBpass
-	}
-
-	secretsManager := secrets_manager.NewSecretsManager(cfg)
-	sm, err := secretsManager.GetRDS(smName, region)
-	if err == nil {
-		DBuser = sm.Username
-		DBpass = sm.Password
-	}
-
-	return DBuser, DBpass
 }
